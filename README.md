@@ -1,22 +1,33 @@
-# Electric Vehicle Energy Consumption Prediction using Machine Learning
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score
+import joblib
 
-## 📌 Overview
-This project predicts the energy consumption of Electric Vehicles (EVs) using Machine Learning techniques. The model analyzes factors such as vehicle speed, acceleration, battery status, road conditions, and environmental parameters to estimate energy usage accurately.
+# Load Dataset
+data = pd.read_csv("dataset/ev_data.csv")
 
-## 🚀 Features
-- Data preprocessing and cleaning
-- Feature selection
-- Machine Learning model training
-- Energy consumption prediction
-- Performance evaluation
-- Data visualization
+# Features
+X = data[['Speed','Acceleration','Battery','Temperature']]
 
-## 🛠️ Technologies Used
-- Python
-- Pandas
-- NumPy
-- Scikit-learn
-- Matplotlib
-- Jupyter Notebook / VS Code
+# Target
+y = data['Energy']
 
-## 📂 Project Structure
+# Split
+X_train,X_test,y_train,y_test = train_test_split(
+    X,y,test_size=0.2,random_state=42)
+
+# Model
+model = RandomForestRegressor(
+    n_estimators=100,
+    random_state=42)
+
+model.fit(X_train,y_train)
+
+prediction=model.predict(X_test)
+
+accuracy=r2_score(y_test,prediction)
+
+print("Model Accuracy :",accuracy)
+
+joblib.dump(model,"models/ev_model.pkl")
